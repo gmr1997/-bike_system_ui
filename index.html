@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>共享单车管理系统</title>
+
+		<!-- Custom fonts for this template -->
+		<link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+		 rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+		<!-- Custom styles for this page -->
+		<link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+	</head>
+
+	<body id="page-top">
+
+		<!-- Page Wrapper -->
+		<div id="wrapper">
+
+			<!-- 左侧菜单栏开始 -->
+			<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+				<!-- 显示头像用户名的div -->
+				<a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+					<div class="sidebar-brand-icon rotate-n-15" data-toggle="modal" data-target="#updatePhoto">
+						<i class=""><img class="profile-pic animated userPhoto rounded-circle" src="" id="userPic" alt="" style="width: 50px; height: 50px;"></i>
+					</div>
+					<div class="sidebar-brand-text mx-3" id="leftUserName">甘明冉</div>
+				</a>
+
+				<!-- 用户信息管理开始 -->
+				<li class="nav-item">
+					<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true"
+					 aria-controls="collapseUtilities">
+						<i class="fas fa-fw fa-wrench"></i>
+						<span>用户信息管理</span>
+					</a>
+					<div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+						<div class="bg-white py-2 collapse-inner rounded">
+							<a class="collapse-item" href="#" id="userSex"></a>
+							<a class="collapse-item" href="#" id="userTel"></a>
+							<a class="collapse-item" href="#" id="userEmail"></a>
+							<hr />
+							<a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+								<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+								退出登录
+							</a>
+						</div>
+					</div>
+				</li>
+				<!-- 用户信息管理结束 -->
+
+				<!-- Sidebar Toggler (Sidebar) -->
+				<div class="text-center d-none d-md-inline">
+					<button class="rounded-circle border-0" id="sidebarToggle"></button>
+				</div>
+			</ul>
+			<!-- 左侧菜单栏结束 -->
+
+			<!-- 退出登录模态框 -->
+			<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">确定要退出登录吗?</h5>
+							<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">×</span>
+							</button>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+							<a class="btn btn-primary" href="login.html">确定</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 修改用户头像模态框开始 -->
+			<div class="modal fade" id="updatePhoto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">修改头像</h5>
+							<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true" class="closeModal">×</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form id="updateUserPhotoForm" method="post" enctype="multipart/form-data">
+								<div class="fileupload fileupload-new" data-provides="fileupload">
+									<img class="profile-pic animated userPhoto" src="" id="userPic1" alt="">
+									<div>
+										<span class="btn btn-file btn-alt btn-sm">
+											<input type="file" name="userPhoto" id="inputPic" />
+										</span>
+									</div>
+								</div>
+							</form>
+
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+							<a class="btn btn-primary" href="" id="changePicBtn">确定</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 修改用户头像模态框结束 -->
+
+			<!-- Content Wrapper -->
+			<div id="content-wrapper" class="d-flex flex-column">
+
+				<!-- Main Content -->
+				<div id="content">
+
+					<!-- Begin Page Content -->
+					<div class="container-fluid">
+
+						<!-- Page Heading -->
+						<h1 class="h3 mb-2 text-gray-800" style="margin-top: 20px;">共享单车列表</h1>
+
+						<!-- DataTales Example -->
+						<div class="card shadow mb-4">
+							<div class="card-header py-3">
+								<h6 class="m-0 font-weight-bold text-primary">单车详情</h6>
+							</div>
+							<div class="card-body">
+								<div class="table-responsive">
+									<table class="table table-bordered" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+												<th>编号</th>
+												<th>地址</th>
+												<th>部件</th>
+												<th>损坏情况</th>
+												<th>上报时间</th>
+												<th>状态</th>
+											</tr>
+										</thead>
+										<tbody id="bikeTbody">
+											<tr>
+												<td colspan="9">没有满足条件的单车信息！！！</td>
+											</tr>
+										</tbody>
+									</table>
+									<!-- 显示分页按钮开始 -->
+									<div class="text-center col-sm-12 col-md-11">
+										<ul class="pagination" id="pagination">
+											
+										</ul>
+									</div>
+									<!-- 显示分页按钮结束 -->
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<!-- /.container-fluid -->
+
+				</div>
+				<!-- End of Main Content -->
+
+			</div>
+			<!-- End of Content Wrapper -->
+
+		</div>
+		<!-- End of Page Wrapper -->
+
+		<!-- Scroll to Top Button-->
+		<a class="scroll-to-top rounded" href="#page-top">
+			<i class="fas fa-angle-up"></i>
+		</a>
+
+
+
+		<!-- Bootstrap core JavaScript-->
+		<script src="vendor/jquery/jquery.min.js"></script>
+		<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+		<!-- Core plugin JavaScript-->
+		<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+		<!-- Custom scripts for all pages-->
+		<script src="js/sb-admin-2.min.js"></script>
+
+		<!-- Page level plugins -->
+		<script src="vendor/datatables/jquery.dataTables.min.js"></script>
+		<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+		<!-- Page level custom scripts -->
+		<!-- <script src="js/demo/datatables-demo.js"></script> -->
+
+		<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+		
+		<!-- 导入自定义JS代码 -->
+		<script type="text/javascript" src="js/pageButton.js"></script>
+
+		<!-- 自定义JS代码 -->
+		<script type="text/javascript">
+			$(function() {
+				//从sessionStorage缓存中获取登录用户信息
+				var loginUser = JSON.parse(sessionStorage.getItem('loginUser'));
+				if (loginUser != null) {
+					//初始化界面上登录用户的信息
+					$("#userPic").attr("src", loginUser.userPic);
+					$("#leftUserName").text(loginUser.userName);
+					$("#userSex").text('性别:' + (loginUser.userName == 0 ? '男' : '女'));
+					$("#userTel").text('电话:' + loginUser.userTel);
+					$("#userEmail").text('邮箱:' + loginUser.userEmail);
+					$("#userPic1").attr("src", loginUser.userPic);
+				} else {
+					alert("请先登录！");
+					window.location.href = "login.html";
+				}
+
+				//修改图片按钮点击事件
+				$("#changePicBtn").click(function() {
+					//获得登录用户的头像
+					var userId = loginUser.userId;
+					$.ajax({
+						url: "http://127.0.0.1:8082/uploadPhoto",
+						type: "POST",
+						dataType: "json",
+						cache: false,
+						data: new FormData($("#updateUserPhotoForm")[0]),
+						processData: false,
+						contentType: false,
+						success: function(data) {
+							//如果用户头像上传成功
+
+							if (data.code == 0) {
+								//获得上传文件的文件名和文件扩展名
+								var userPic = data.dataMap.newFileName + data.dataMap.extendeName;
+								//删除用户原头像
+								var url = "http://127.0.0.1:8082/deletePhoto";
+								var args = {
+									"userPic": loginUser.userPic
+								};
+								//发出请求删除原头像
+								$.post(url, args, function(data) {
+									//如果删除成功
+									if (data.code == 0) {
+										//发送请求,修改数据库中的头像
+										var url = "http://127.0.0.1:8082/updatePhoto";
+										var args = {
+											"userId": userId,
+											"userPic": "http://127.0.0.1:8082/img/" + userPic
+										};
+										$.post(url, args, function(data) {
+											if (data.code == 0) {
+												//更新左侧显示头像框的头像
+												$("#userPic").attr("src", "http://127.0.0.1:8082/img/" + userPic);
+												//重新设置登录用户的头像信息
+												loginUser.userPic = "http://127.0.0.1:8082/img/" + userPic;
+												//将修改头像后的用户信息重新存入缓存中
+												sessionStorage.setItem("loginUser", JSON.stringify(loginUser));
+												//关闭模态框
+												$(".closeModal").click();
+												// $("#updatePhoto").attr("aria-hidden",true);
+												// $("#updatePhoto").modal("hide");
+											} else {
+												alert(data.message);
+											}
+										});
+									} else {
+										alert(data.message);
+									}
+								});
+							} else {
+								alert(data.message);
+							}
+						}
+					});
+
+					return false;
+				});
+
+				//获取input标签对象
+				var file = $("#inputPic");
+				//当选择本地图片后,自动预览
+				file.change(function() {
+					$("#userPic1").attr("src", getObjectURL(file[0].files[0]));
+				});
+
+				//获取图片真实路径
+				function getObjectURL(file) {
+					var url = null;
+					/* window.URL = window.URL || window.webkitURL;*/
+
+					if (window.createObjcectURL != undefined) {
+						url = window.createOjcectURL(file);
+					} else if (window.URL != undefined) {
+						url = window.URL.createObjectURL(file);
+					} else if (window.webkitURL != undefined) {
+						url = window.webkitURL.createObjectURL(file);
+					}
+					return url;
+				}
+				
+				//获取指定页的数据
+				function selectBikeInfoByPageNum(pageNum){
+					var url = "http://127.0.0.1:8082/selectAll";
+					
+					var args = {
+						"pageNumber":pageNum
+					};
+					$.post(url,args,function(data){
+						//获取id属性为bikeTbody的tbody元素
+						var tbody = $("#bikeTbody");
+						//在tbody中找到所有的tr,并移除
+						tbody.find("tr").remove();
+						
+						if(data.code == 0){
+							//获得分页信息
+							var pageInfo = data.dataMap.pageInfo;
+							//获得所有单车信息
+							var bikeList = pageInfo.list;
+							//使用循环将订单信息添加到tbody中
+							for(var i = 0; i < bikeList.length; i++){
+								var tr = $("<tr></tr>");
+								bike = bikeList[i];
+								tr.append("<td>" + bike.thebikeCode + "</td>");
+								tr.append("<td>" + bike.thebikeAddress + "</td>");
+								tr.append("<td>" + bike.thecomponetId + "</td>");
+								tr.append("<td>" + bike.thebreakage + "</td>");
+								tr.append("<td>" + bike.thereportTime + "</td>");
+								tr.append("<td>" + bike.thestateId + "</td>");
+								tbody.append(tr);
+							}
+							//获得显示分页按钮的控件
+							var buttonPanel = $("#pagination");
+							//调用方法,显示分页按钮
+							showNavigate(buttonPanel, pageInfo, selectBikeInfoByPageNum);
+							
+						}else{
+							tbody.append("<tr><td colspan='9'>没有满足条件的单车信息！！！</td></tr>");
+						}
+					});
+				}
+				//打开页面自动查询第一页数据,并显示
+				selectBikeInfoByPageNum(1);
+			});
+		</script>
+
+	</body>
+
+</html>
+</script>
+
+</body>
+
+</html>

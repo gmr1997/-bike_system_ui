@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>登录</title>
+
+		<!-- Custom fonts for this template-->
+		<link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+		 rel="stylesheet">
+
+		<!-- Custom styles for this template-->
+		<link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+	</head>
+
+	<body class="bg-gradient-primary">
+
+		<div class="container">
+
+			<!-- Outer Row -->
+			<div class="row justify-content-center">
+
+				<div class="col-xl-10 col-lg-12 col-md-9">
+
+					<div class="card o-hidden border-0 shadow-lg my-5">
+						<div class="card-body p-0">
+							<!-- Nested Row within Card Body -->
+							<div class="row">
+								<div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+								<div class="col-lg-6">
+									<div class="p-5">
+										<div class="text-center">
+											<h1 class="h4 text-gray-900 mb-4">用户登录</h1>
+										</div>
+										<form class="user">
+											<div class="form-group">
+												<input type="text" class="form-control form-control-user" id="userName" aria-describedby="emailHelp"
+												 placeholder="请输入用户名...">
+											</div>
+											<div class="form-group">
+												<input type="password" class="form-control form-control-user" id="userPassword" placeholder="请输入密码...">
+											</div>
+											<div class="form-group">
+												<div class="custom-control custom-checkbox small">
+													<input type="checkbox" class="custom-control-input" id="customCheck">
+													<label class="custom-control-label" for="customCheck">记住密码</label>
+												</div>
+											</div>
+											<a href="" class="btn btn-primary btn-user btn-block" id="btn">
+												登录
+											</a>
+										</form>
+										<hr>
+										<div class="text-center">
+											<a class="small" href="register.html">注册一个账号</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<!-- Bootstrap core JavaScript-->
+		<script src="vendor/jquery/jquery.min.js"></script>
+		<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+		<!-- Core plugin JavaScript-->
+		<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+		<!-- Custom scripts for all pages-->
+		<script src="js/sb-admin-2.min.js"></script>
+
+		<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+
+		<script type="text/javascript">
+			$(function() {
+				//判断localStorage里面有没有用户信息,有的话填充到输入框里
+				//从浏览器localStorage缓存中获得登录用户完整信息
+				var loginUser = JSON.parse(localStorage.getItem("loginUser"));
+				if(loginUser != null){
+					//调用方法登录
+					login(loginUser.userName, loginUser.userPassword);
+				}
+				
+				//为登录按钮添加单击事件
+				$("#btn").click(function() {
+					//验证用户输入的信息是否为空
+					var userName = $("#userName");
+					var userPassword = $("#userPassword");
+					if (userName.val() == "") {
+						alert("用户名不能为空！")
+						return false;
+					}
+					if (userPassword.val() == "") {
+						alert("密码不能为空！")
+						return false;
+					}
+
+					//创建url
+					var url = "http://localhost:8082/userLogin";
+					//创建参数
+					var args = {
+						"userName": userName.val(),
+						"userPassword": userPassword.val()
+					};
+					//发出请求,并获得响应结果
+					$.post(url, args, function(data) {
+						if(data.code == 0){
+							//将登录成功普通用户信息保存到浏览器缓存中(sessionStorage)
+							var loginUser = data.dataMap.loginUser;
+							//将用户信息存入session
+							sessionStorage.setItem('loginUser',JSON.stringify(loginUser));
+							//如果用户勾上了记住密码,把密码存入localStorage里面
+							var isRemenberPwd = $("#customCheck").prop("checked");//选中的话就是true,否则是false
+							if(isRemenberPwd){
+								localStorage.setItem('loginUser',JSON.stringify(loginUser));
+							}
+							//跳转到index.html
+							window.location.href="index.html";
+						}else{
+							alert(data.message);
+							$("#userPassword").val("");
+							$("#userName").select();
+						}
+					});
+					return false;
+				});
+				
+				//登录方法
+				function login(userName, password){
+					var url = "http://localhost:8082/userLogin";
+					var args = {
+						"userName": userName,
+						"userPassword": password
+					};
+					$.post(url,args,function(data){
+						if(data.code == 0){
+							//将登录成功普通用户信息保存到浏览器缓存中(sessionStorage)
+							var loginUser = data.dataMap.loginUser;
+							//将用户信息存入session
+							sessionStorage.setItem('loginUser',JSON.stringify(loginUser));
+							//跳转到index.html
+							window.location.href="index.html";
+							alert("自动登录成功！");
+						}else{
+							alert("登录失败！");
+						}
+					});
+				}
+				
+			})
+		</script>
+
+	</body>
+
+</html>
